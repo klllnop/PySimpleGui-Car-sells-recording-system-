@@ -1,0 +1,268 @@
+#Importação de algumas bibliotecas usadas
+import datetime
+import PySimpleGUI as sg
+import random
+import string
+
+#gerador código de acesso único
+
+tamanho = 8
+minusculas = string.ascii_lowercase
+maiusculas = string.ascii_uppercase
+numeros = string.digits
+simbolos = string.punctuation
+
+tudo = minusculas + maiusculas + numeros + simbolos
+passwordemlista = random.sample(tudo, tamanho)
+password = "".join(passwordemlista)
+print(password)
+
+#fim gerador
+
+
+#variaveis para elif da página2
+a = 1
+b = 2
+
+#janela1
+def janela_escolhametodologinfuncionario():
+    sg.theme("Reddit")
+    layout = [
+        [sg.Text("Selecione o método de Inicio de Sessão")],
+        [sg.Button("Credenciais"), sg.Button("Código de Acesso único")]
+    ]
+    return sg.Window("Seleção método login", layout=layout, finalize=True)
+
+#janela2
+def janela_logincredenciais():
+    sg.theme("Reddit")
+    layout = [
+        [sg.Text("Nome utilizador"), sg.Input(key='nomeutilizador')],
+        [sg.Text("Palavra-passe"), sg.Input(key="palavrapasse")],
+        [sg.Button("Iniciar sessão"), sg.Button("Voltar atrás")]
+    ]
+    return sg.Window("Credenciais de Acesso", layout=layout, finalize=True)
+
+#janela3
+def janela_logincodigoacesso():
+    sg.theme("Reddit")
+    layout = [
+        [sg.Text("Insira o seu código de acesso"), sg.Input(key='codigoacesso')],
+        [sg.Button("Iniciar sessão")]
+    ]
+    return sg.Window("Código de Acesso", layout=layout, finalize=True)
+
+#janela4
+def janela_selecaodeacao():
+    sg.theme("Reddit")
+    layout = [
+        [sg.Text("Selecione o que pretende")],
+        [sg.Button("Registar nova compra"), sg.Button("Ainda não sei o que colocar aqui")]
+    ]
+    return sg.Window("Ações", layout=layout, finalize=True)
+
+#janela5
+def janela_registarnovacompra():
+    sg.theme("Reddit")
+    layout = [
+        [sg.Text("Nome vendedor:"), sg.Input(key='nomevendedor')],
+        [sg.Text("Nome comprador:"), sg.Input(key="nomecomprador")],
+        [sg.Text("Morada comprador"), sg.Input(key="moradacomprador")],
+        [sg.Radio('Dinheiro', "RADIO1", default=True, key="dinheiro"), sg.Radio('Cartão', "RADIO1", default=False, key="cartao"), sg.Radio('Cheque', "RADIO1", default=False, key="cheque")],
+        [sg.Text("Marca:"), sg.Input(key="marcaveiculo")],
+        [sg.Text("Modelo"), sg.Input(key="modelo")],
+        [sg.Text("Matricula"), sg.Input(key="matricula")],
+        [sg.Text("Vin"), sg.Input(key="vin")],
+        [sg.Button("Confirmar compra"), sg.Button("Voltar atrás") ]
+    ]
+    return sg.Window("Credenciais de Acesso", layout=layout, finalize=True)
+
+#Criar as janelas iniciais (Dizer ao programa quais as janelas que queremos que abram quando iniciamos)
+
+
+janela1, janela2, janela3, janela4, janela5 = janela_escolhametodologinfuncionario(), None, None, None, None
+
+#Criar loop para o PySimpleGUI estar sempre a ver o que está a acontecer na aplicacão
+while True:
+    window, event, values = sg.read_all_windows()
+
+#quando a janela for fechada
+    if window == janela1 and event == sg.WIN_CLOSED:
+        break
+
+    if window == janela2 and event == sg.WIN_CLOSED:
+        break
+
+    if window == janela3 and event == sg.WIN_CLOSED:
+        break
+
+    if window == janela4 and event == sg.WIN_CLOSED:
+        break
+
+    if window == janela5 and event == sg.WIN_CLOSED:
+        break
+
+#funcoes em cada janela
+
+
+    #eventos da janela1
+    if window == janela1 and event == "Credenciais":
+        janela2 = janela_logincredenciais()
+        janela1.hide()
+    elif window == janela1 and event == "Código de Acesso único":
+        janela3 = janela_logincodigoacesso()
+        janela1.hide()
+
+
+    #eventos da janela2
+    if window == janela2 and values["nomeutilizador"] == "Marco" and values["palavrapasse"] == "123" and event == "Iniciar sessão":
+        sg.popup("Credenciais certas")
+        janela4 = janela_selecaodeacao()
+        janela2.hide()
+
+    if window == janela2 and event == "Voltar atrás":
+        janela2.hide()
+        janela1.un_hide()
+
+    #eventos da janela3
+    if window == janela3 and values["codigoacesso"] == password and event == "Iniciar sessão":
+        sg.popup("Inicio de sessão com sucesso.")
+        janela4 = janela_selecaodeacao()
+        janela3.hide()
+
+    #eventos da janela4
+    if window == janela4 and event == "Registar nova compra":
+        janela5 = janela_registarnovacompra()
+        janela4.hide()
+    elif window == janela4 and event == "Ainda não sei o que colocar aqui":
+        sg.popup("Página a ser criada")
+
+
+    #eventos da janela5
+    if window == janela5 and event == "Voltar atrás":
+        janela5.hide()
+        janela4.un_hide()
+
+    if window == janela5 and event == "Confirmar compra" and values["dinheiro"] == True:
+        nomevendedor = (values['nomevendedor'])
+        nomecomprador = (values["nomecomprador"])
+        moradacomprador = (values["moradacomprador"])
+        metodopagamento = "Dinheiro"
+        marcaveiculo = (values["marcaveiculo"])
+        modelo = (values["modelo"])
+        matricula = (values["matricula"])
+        vin = (values["vin"])
+        datacompra = datetime.datetime.now()
+        f = open("historicovendas.txt", "a")
+        f.write("Nome vendedor: ")
+        f.write(nomevendedor)
+        f.write("\n")
+        f.write("Nome comprador: ")
+        f.write(nomecomprador)
+        f.write("\n")
+        f.write("Morada Comprador: ")
+        f.write(moradacomprador)
+        f.write("\n")
+        f.write("Metodo pagamento: ")
+        f.write(metodopagamento)
+        f.write("\n")
+        f.write("Marca Veiculo: ")
+        f.write(marcaveiculo)
+        f.write("\n")
+        f.write("Modelo: ")
+        f.write(modelo)
+        f.write("\n")
+        f.write("Matricula: ")
+        f.write(matricula)
+        f.write("Vin: ")
+        f.write(vin)
+        f.write("\n")
+        f.write("Data da venda: ")
+        f.write(str(datacompra))
+        f.write("\n")
+        f.write("-----------------------")
+        f.write("\n")
+        f.close(),
+        sg.popup("Compra finalizada com sucesso.")
+    elif window == janela5 and event == "Confirmar compra" and values["cartao"] == True:
+        nomevendedor = (values['nomevendedor'])
+        nomecomprador = (values["nomecomprador"])
+        moradacomprador = (values["moradacomprador"])
+        metodopagamento = "Cartao"
+        marcaveiculo = (values["marcaveiculo"])
+        modelo = (values["modelo"])
+        matricula = (values["matricula"])
+        vin = (values["vin"])
+        datacompra = datetime.datetime.now()
+        f = open("historicovendas.txt", "a")
+        f.write("Nome vendedor: ")
+        f.write(nomevendedor)
+        f.write("\n")
+        f.write("Nome comprador: ")
+        f.write(nomecomprador)
+        f.write("\n")
+        f.write("Morada Comprador: ")
+        f.write(moradacomprador)
+        f.write("\n")
+        f.write("Metodo pagamento: ")
+        f.write(metodopagamento)
+        f.write("\n")
+        f.write("Marca Veiculo: ")
+        f.write(marcaveiculo)
+        f.write("\n")
+        f.write("Modelo: ")
+        f.write(modelo)
+        f.write("\n")
+        f.write("Matricula: ")
+        f.write(matricula)
+        f.write("Vin: ")
+        f.write(vin)
+        f.write("\n")
+        f.write("Data da venda: ")
+        f.write(str(datacompra))
+        f.write("\n")
+        f.write("-----------------------")
+        f.write("\n")
+        f.close(),
+        sg.popup("Compra finalizada com sucesso.")
+    elif window == janela5 and event == "Confirmar compra" and values ["cheque"] == True:
+        nomevendedor = (values['nomevendedor'])
+        nomecomprador = (values["nomecomprador"])
+        moradacomprador = (values["moradacomprador"])
+        metodopagamento = "Cheque"
+        marcaveiculo = (values["marcaveiculo"])
+        modelo = (values["modelo"])
+        matricula = (values["matricula"])
+        vin = (values["vin"])
+        datacompra = datetime.datetime.now()
+        f = open("historicovendas.txt", "a")
+        f.write("Nome vendedor: ")
+        f.write(nomevendedor)
+        f.write("\n")
+        f.write("Nome comprador: ")
+        f.write(nomecomprador)
+        f.write("\n")
+        f.write("Morada Comprador: ")
+        f.write(moradacomprador)
+        f.write("\n")
+        f.write("Metodo pagamento: ")
+        f.write(metodopagamento)
+        f.write("\n")
+        f.write("Marca Veiculo: ")
+        f.write(marcaveiculo)
+        f.write("\n")
+        f.write("Modelo: ")
+        f.write(modelo)
+        f.write("\n")
+        f.write("Matricula: ")
+        f.write(matricula)
+        f.write("Vin: ")
+        f.write(vin)
+        f.write("\n")
+        f.write("Data da venda: ")
+        f.write(str(datacompra))
+        f.write("\n")
+        f.write("-----------------------")
+        f.write("\n")
+        f.close(),
+        sg.popup("Compra finalizada com sucesso.")
